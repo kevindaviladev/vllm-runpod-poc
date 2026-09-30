@@ -1,0 +1,24 @@
+{
+  "_comentario": "Copia a ~/.config/opencode/opencode.json y reemplaza POD_ID y la key. Ver reports/poc-minimo-runpod-AHORA.md",
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "poc": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "PoC RunPod (LiteLLM -> vLLM)",
+      "options": {
+        "baseURL": "https://POD_ID-4000.proxy.runpod.net/v1",
+        "apiKey": "sk-TU-VIRTUAL-KEY"
+      },
+      "models": {
+        "qwen3-coder-30b": {
+          "name": "Qwen3-Coder 30B FP8 (RunPod L40S)",
+          "limit": {
+            "context": 65536,
+            "output": 8192
+          }
+        }
+      }
+    }
+  },
+  "model": "poc/qwen3-coder-30b"
+}

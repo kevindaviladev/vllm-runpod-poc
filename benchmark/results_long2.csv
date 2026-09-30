@@ -1,0 +1,16 @@
+model,prompt_tokens,output_tokens,message,ttft_ms,prefill_ms,prefill_tok_s,total_ms,tok_s_reported,tok_s_measured
+qwen2.5:7b,6038,461,"Resumen de 5 puntos clave:
+
+1. **La inferencia es crítica para la eficiencia operativa**: La naturaleza de la inferencia define el costo real y el rendimiento de los modelos de lenguaje a gran escala, superando la percepción inicial en términos de casos de uso y competencia.
+
+2. **Memoria y ancho de banda de la memoria son recursos clave**: La segunda fase de la inferencia (decode) implica la lectura completa del modelo de memoria a procesador, haciendo del ancho de banda de la memoria el recurso más limitante en la generación de tokens.
+
+3. **La gestión de memoria es crucial para aumentar la capacidad de servicio**: El KV cache y técnicas como la paginación permiten compartir eficientemente el cache de memoria, aumentando significativamente el número de solicitudes concurrentes que un servidor puede manejar.
+
+4. **La cuantización reduce la memoria y aumenta el rendimiento, pero a costa de la calidad**: Reducir el tamaño de los pesos de los modelos de 16 bits a 4 bits o menos puede mejorar el rendimiento y permitir el uso de hardware más económico, aunque puede llevar a una degradación en la calidad de la generación de texto.
+
+5. **Batching mejora el uso eficiente del hardware**: La técnica de batching permite compartir la lectura de los pesos del modelo entre múltiples solicitudes, aumentando la utilización del hardware y la tasa de generación total, aunque complica la gestión de la latencia.
+
+Concepto más importante: **La gestión de memoria es crucial para aumentar la capacidad de servicio**.
+
+**Razón**: La gestión eficiente de la memoria es esencial para optimizar la capacidad de servicio de los modelos de lenguaje, ya que la memoria limita directamente el número de usuarios que un servidor puede atender simultáneamente. Esta gestión incluye técnicas como la paginación del KV cache, que permiten compartir eficientemente el cache de memoria entre múltiples solicitudes, lo que es fundamental para aumentar el número de usuarios que se pueden manejar sin sacrificar el rendimiento.",4979.7,4933.8,1223.8,13540.8,53.9,53.8

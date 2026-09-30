@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # EL BUENO: vLLM expone metricas ricas y abiertas (TTFT, tok/s, KV cache en uso,
+  # cola, prefix cache hit rate). Es la fuente de verdad del servidor.
+  # <-- EDITA ESTE HOST cuando cambies de pod: SIN https:// y SIN /metrics
+  - job_name: vllm
+    scheme: https
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["<POD_ID>-8888.proxy.runpod.net"]
+
+  # LiteLLM: su /metrics es funcion Enterprise (sin licencia devuelve vacio).
+  # Las stats por persona/key/costo salen de la UI en :4000/ui, no de aqui.
+  - job_name: litellm
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["litellm:4000"]

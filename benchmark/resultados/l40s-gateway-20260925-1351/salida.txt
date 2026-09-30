@@ -1,0 +1,91 @@
+Destino: https://<POD_ID>-8888.proxy.runpod.net/v1
+Modelo : qwen3-coder-30b
+Inicio : Fri Sep 25 13:51:15 -05 2026
+
+--- calentando ---
+
+########## c01-16k  (c=1, ctx=16000, unique) ##########
+Lanzando 1 peticiones concurrentes (~16000 tokens de contexto, session-mode=unique)...
+
+=== RESULTADOS ===
+Modelo: qwen3-coder-30b | concurrencia: 1 | contexto: ~16000 tok | session-mode: unique
+Exitos: 1/1  (fallos: 0)
+Pared total: 3.3s
+TTFT   p50: 2541.2 ms | p90: 2541.2 ms | max: 2541.2 ms
+tok/s  min: 120.3 | p50: 120.3 | p90: 120.3
+Throughput agregado: 120 tok/s
+
+Criterios del plan: TTFT p90 < 1500 ms | tok/s por usuario >= 40 | 0 fallos
+Detalle guardado en resultados/l40s-gateway-20260925-1351/c01-16k.csv
+
+########## c05-16k  (c=5, ctx=16000, unique) ##########
+Lanzando 5 peticiones concurrentes (~16000 tokens de contexto, session-mode=unique)...
+
+=== RESULTADOS ===
+Modelo: qwen3-coder-30b | concurrencia: 5 | contexto: ~16000 tok | session-mode: unique
+Exitos: 5/5  (fallos: 0)
+Pared total: 9.1s
+TTFT   p50: 5435.4 ms | p90: 7540.7 ms | max: 7540.7 ms
+tok/s  min: 17.7 | p50: 27.3 | p90: 62.3
+Throughput agregado: 166 tok/s
+
+Criterios del plan: TTFT p90 < 1500 ms | tok/s por usuario >= 40 | 0 fallos
+Detalle guardado en resultados/l40s-gateway-20260925-1351/c05-16k.csv
+
+########## c10-16k  (c=10, ctx=16000, unique) ##########
+Lanzando 10 peticiones concurrentes (~16000 tokens de contexto, session-mode=unique)...
+
+=== RESULTADOS ===
+Modelo: qwen3-coder-30b | concurrencia: 10 | contexto: ~16000 tok | session-mode: unique
+Exitos: 10/10  (fallos: 0)
+Pared total: 16.1s
+TTFT   p50: 9652.1 ms | p90: 14206.2 ms | max: 14206.2 ms
+tok/s  min: 9.0 | p50: 15.9 | p90: 50.7
+Throughput agregado: 199 tok/s
+
+Criterios del plan: TTFT p90 < 1500 ms | tok/s por usuario >= 40 | 0 fallos
+Detalle guardado en resultados/l40s-gateway-20260925-1351/c10-16k.csv
+
+########## c05-32k  (c=5, ctx=32000, unique) ##########
+Lanzando 5 peticiones concurrentes (~32000 tokens de contexto, session-mode=unique)...
+
+=== RESULTADOS ===
+Modelo: qwen3-coder-30b | concurrencia: 5 | contexto: ~32000 tok | session-mode: unique
+Exitos: 5/5  (fallos: 0)
+Pared total: 18.7s
+TTFT   p50: 10540.9 ms | p90: 16609.0 ms | max: 16609.0 ms
+tok/s  min: 8.1 | p50: 13.7 | p90: 56.7
+Throughput agregado: 110 tok/s
+
+Criterios del plan: TTFT p90 < 1500 ms | tok/s por usuario >= 40 | 0 fallos
+Detalle guardado en resultados/l40s-gateway-20260925-1351/c05-32k.csv
+
+########## c10-32k  (c=10, ctx=32000, unique) ##########
+Lanzando 10 peticiones concurrentes (~32000 tokens de contexto, session-mode=unique)...
+
+=== RESULTADOS ===
+Modelo: qwen3-coder-30b | concurrencia: 10 | contexto: ~32000 tok | session-mode: unique
+Exitos: 10/10  (fallos: 0)
+Pared total: 36.3s
+TTFT   p50: 20861.2 ms | p90: 34434.2 ms | max: 34434.2 ms
+tok/s  min: 6.9 | p50: 7.6 | p90: 56.6
+Throughput agregado: 147 tok/s
+
+Criterios del plan: TTFT p90 < 1500 ms | tok/s por usuario >= 40 | 0 fallos
+Detalle guardado en resultados/l40s-gateway-20260925-1351/c10-32k.csv
+
+########## c10-16k-shared  (c=10, ctx=16000, shared) ##########
+Lanzando 10 peticiones concurrentes (~16000 tokens de contexto, session-mode=shared)...
+
+=== RESULTADOS ===
+Modelo: qwen3-coder-30b | concurrencia: 10 | contexto: ~16000 tok | session-mode: shared
+Exitos: 10/10  (fallos: 0)
+Pared total: 5.2s
+TTFT   p50: 3772.6 ms | p90: 3782.7 ms | max: 3782.7 ms
+tok/s  min: 71.5 | p50: 73.6 | p90: 76.3
+Throughput agregado: 740 tok/s
+
+Criterios del plan: TTFT p90 < 1500 ms | tok/s por usuario >= 40 | 0 fallos
+Detalle guardado en resultados/l40s-gateway-20260925-1351/c10-16k-shared.csv
+
+Fin: Fri Sep 25 13:52:48 -05 2026

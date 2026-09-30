@@ -1,0 +1,59 @@
+El siguiente texto es un artículo técnico sobre infraestructura de inferencia de LLMs. Léelo completo y luego responde: resume el artículo en exactamente 5 puntos clave, y al final indica cuál fue el concepto más importante según tu criterio y por qué.
+
+---
+
+INFERENCIA DE MODELOS DE LENGUAJE A GRAN ESCALA: UNA GUÍA COMPLETA
+
+Cuando una empresa decide adoptar modelos de lenguaje de gran tamaño, rara vez piensa primero en la inferencia. Piensa en casos de uso, en productividad, en la competencia. Pero la inferencia es donde vive el costo real, y entenderla bien es la diferencia entre una factura razonable y una sorpresa de seis cifras al final del trimestre.
+
+LA NATURALEZA DE LA INFERENCIA
+
+Un modelo de lenguaje entrenado es, en esencia, una colección gigantesca de parámetros numéricos que codifican patrones estadísticos del lenguaje. Un modelo de 7 mil millones de parámetros ocupa, en precisión de 16 bits, unos 14 gigabytes de memoria. Cuando alguien envía una pregunta al modelo, ocurren dos fases claramente diferenciadas.
+
+La primera fase se llama prefill. En ella, el sistema procesa el prompt completo del usuario de una sola vez. Esta fase es paralela: las unidades de cómputo trabajan simultáneamente sobre todos los tokens de entrada, llenando la GPU (o cualquier procesador disponible) de trabajo útil. Un prompt de mil tokens puede procesarse en milisegundos si el hardware es potente, porque el paralelismo absorbe la carga.
+
+La segunda fase es el decode. Aquí el modelo genera la respuesta token por token, de forma secuencial y obligatoria: para producir la palabra número cincuenta, primero tuvo que producir las cuarenta y nueve anteriores. Cada token nuevo requiere una pasada completa por el modelo. Y aquí aparece la restricción física fundamental: cada token generado obliga a leer todos los pesos del modelo desde la memoria. Si el modelo ocupa 14 gigabytes, generar un solo token implica mover 14 gigabytes de datos entre memoria y procesador.
+
+Esta es la razón por la que la velocidad de generación de un modelo local depende mucho más del ancho de banda de memoria que de la potencia bruta de cómputo. Una tarjeta gráfica de gama alta no destaca solo por sus miles de núcleos: destaca porque su memoria puede entregar terabytes por segundo.
+
+MEMORIA: EL RECURSO ESCASO
+
+La memoria total necesaria para servir un modelo no es solo el tamaño de sus pesos. Hay que sumar el KV cache: la estructura de datos donde el sistema guarda, para cada token procesado, los vectores internos que el mecanismo de atención necesita consultar. Sin este cache, cada token nuevo obligaría a recalcular todo el historial, y la generación sería absurdamente lenta.
+
+El problema es que el KV cache crece linealmente con la longitud del contexto. Un modelo con ventana de contexto de 128 mil tokens puede necesitar varios gigabytes adicionales solo para el cache de una sola conversación. Si el servidor atiende diez conversaciones simultáneas, multiplica. La memoria se convierte en el recurso que decide cuántos usuarios puede atender una sola máquina, y por tanto cuántas máquinas necesita la empresa.
+
+De aquí nace una disciplina entera: la gestión de memoria. Técnicas como la paginación del KV cache, inspirada en la memoria virtual de los sistemas operativos, permiten compartir y fragmentar el cache de forma eficiente, aumentando dramáticamente el número de solicitudes concurrentes que un servidor puede manejar.
+
+CUANTIZACIÓN: COMPRIMIR SIN DESTRUIR
+
+Los pesos originales de un modelo suelen entrenarse en precisión de 16 bits. La cuantización consiste en representar esos pesos con menos bits: 8, 4, o incluso menos. Un modelo de 7 mil millones de parámetros pasa de 14 gigabytes a unos 4 gigabytes en cuantización de 4 bits.
+
+La intuición es como comprimir una fotografía: se pierde algo de detalle, pero si el algoritmo es bueno, la pérdida es imperceptible para casi todos los usos. Las técnicas modernas agrupan los pesos en bloques y guardan un factor de escala por bloque, de modo que cada peso se aproxima con un entero pequeño multiplicado por su escala local. El resultado: modelos que caben en hardware de consumo, velocidades de generación casi dobladas gracias a la menor cantidad de bytes por token, y una degradación de calidad que en muchos casos prácticos resulta aceptable.
+
+No todo es gratis. La cuantización extrema puede dañar tareas delicadas: razonamiento matemático complejo, generación de código con sintaxis estricta, o idiomas con gramáticas muy distintas del inglés. Por eso la elección del nivel de cuantización es una decisión de ingeniería que debe medirse, no asumirse.
+
+BATCHING: COMPARTIR LA MÁQUINA
+
+Un servidor que procesa una solicitud a la vez desperdicia su capacidad. Durante el decode de un usuario, el procesador lee los pesos del modelo una y otra vez; esos mismos pesos podrían servir a diez, veinte o cien solicitudes simultáneas con apenas costo adicional, porque la lectura de pesos es compartida y el trabajo extra por usuario es comparativamente pequeño.
+
+El batching continuo es la técnica que explota esta propiedad. En lugar de formar lotes fijos que esperan a completarse, el servidor inserta y retira solicitudes del lote activo en cada paso de generación. Una solicitud que termina libera su lugar de inmediato; una que llega se integra al siguiente paso. La utilización del hardware se mantiene alta, y el throughput del sistema —medido en tokens totales por segundo— puede multiplicarse por órdenes de magnitud frente a la atención secuencial.
+
+El costo de esta eficiencia es la complejidad del planificador: decidir qué solicitudes admiten, cuáles pausan, cuáles preciden, y cómo repartir la memoria del KV cache entre todos. Un planificador mal ajustado produce latencias impredecibles, y en un producto real, la latencia impredecible se percibe como falta de calidad.
+
+LOS NÚMEROS QUE IMPORTAN
+
+Tres métricas dominan cualquier conversación seria sobre inferencia. La primera es el tiempo hasta el primer token, que define la percepción de rapidez del usuario final: nadie quiere mirar una pantalla vacía. La segunda es la velocidad de generación, relevante para respuestas largas. La tercera es el throughput agregado, que determina cuánto hardware se necesita para una población de usuarios dada, y por tanto el costo mensual de la operación.
+
+Estas métricas tiran en direcciones opuestas. Aumentar el lote mejora el throughput pero puede empeorar la latencia individual. Mantener modelos residentes elimina arranques en frío pero reserva memoria permanente. Cuantizar ahorra memoria y acelera la generación pero puede costar calidad. La ingeniería de inferencia es, en gran medida, el arte de negociar estos tradeoffs con datos medidos en lugar de intuiciones.
+
+EL CAMINO HACIA EL AUTO-HOSTING
+
+Las APIs comerciales cobran por token, con precios típicos donde la generación cuesta varias veces más que la lectura de contexto. Para volúmenes pequeños, esa comodidad es imbatible: sin servidores, sin mantenimiento, sin responsabilidad sobre la disponibilidad. Pero cuando el volumen crece, la aritmética cambia. Una tarjeta gráfica alquilada tiene un costo fijo mensual que se amortiza entre todos los tokens procesados: cuantos más tokens, menor el costo unitario.
+
+El punto de equilibrio depende de tres variables: el volumen de tokens, el hardware necesario para sostener la calidad y la latencia requeridas, y el costo del equipo que opera la infraestructura. Este último suele subestimarse. Una GPU sin nadie que la vigile, actualice, monitoree y asegure es un pasivo, no un activo.
+
+Por eso las empresas serias no se preguntan "¿cuánto cuesta una GPU?", sino "¿cuánto cuesta operar inferencia para mi workload específico, con mis requisitos de calidad, y comparado con mi factura actual?". La respuesta, calculada con supuestos explícitos y validada con pruebas controladas, es la única base honesta para decidir entre pagar por conveniencia o invertir en infraestructura propia.
+
+---
+
+Responde ahora con el resumen de 5 puntos y el concepto más importante.

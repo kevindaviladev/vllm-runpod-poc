@@ -1,0 +1,36 @@
+model_list:
+  - model_name: qwen3-coder-30b
+    litellm_params:
+      model: openai/qwen3-coder:30b
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+
+  - model_name: qwen2.5-7b
+    litellm_params:
+      model: openai/qwen2.5:7b
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+
+  # El nodo vLLM en RunPod. Se configura en .env (VLLM_BASE_URL, VLLM_API_KEY).
+  # Mismo gateway, dos backends: asi comparas Mac vs GPU sin tocar el cliente.
+  - model_name: qwen3-coder-30b-gpu
+    litellm_params:
+      model: openai/qwen3-coder-30b        # el --served-model-name del pod
+      api_base: os.environ/VLLM_BASE_URL   # https://<pod>-8000.proxy.runpod.net/v1
+      api_key: os.environ/VLLM_API_KEY
+      # self-hosted: el costo por token es 0. El ahorro se calcula aparte,
+      # con los tokens que registra la UI.
+      input_cost_per_token: 0
+      output_cost_per_token: 0
+
+  # Y el fallback a Claude (híbrido) cuando exista la key:
+  # - model_name: claude-fallback
+  #   litellm_params:
+  #     model: anthropic/claude-sonnet-4-5
+  #     api_key: os.environ/ANTHROPIC_API_KEY
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

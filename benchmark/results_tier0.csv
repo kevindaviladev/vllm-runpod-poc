@@ -1,0 +1,50 @@
+model,prompt_tokens,output_tokens,ttft_ms,total_ms,tok_s_measured,response
+qwen3-coder:30b,2011,474,4007.4,9082.8,93.4,"**Resumen del artículo en 5 puntos clave:**
+
+1. **La inferencia de modelos de lenguaje de gran tamaño se divide en dos fases**: prefill (procesamiento paralelo del prompt) y decode (generación secuencial de tokens), donde el decode es más restrictivo por la necesidad de acceder a todos los pesos del modelo en cada paso.
+
+2. **La memoria es el recurso crítico**: el tamaño total de la inferencia depende no solo de los pesos del modelo, sino también del KV cache, que crece con la longitud del contexto y limita cuántas solicitudes puede atender una máquina.
+
+3. **La cuantización permite reducir el uso de memoria y aumentar la velocidad**, comprimiendo los pesos del modelo a menos bits (por ejemplo, 4 bits en lugar de 16), aunque con posibles pérdidas en calidad para tareas exigentes.
+
+4. **El batching continuo mejora el throughput** al compartir recursos entre múltiples solicitudes concurrentes, pero requiere un planificador complejo que equilibrar latencia y eficiencia sin sacrificar la experiencia del usuario.
+
+5. **Las métricas clave de inferencia son el tiempo hasta el primer token, la velocidad de generación y el throughput**, y la ingeniería consiste en negociar estos tradeoffs de acuerdo con los requisitos de calidad y volumen de uso.
+
+---
+
+**Concepto más importante según mi criterio:**
+
+El **concepto más importante del artículo es la naturaleza física del costo de inferencia**, que se basa principalmente en restricciones de memoria y ancho de banda, no en potencia de cómputo. Esto es crucial porque explica por qué, a diferencia de lo que podría parecer, los modelos grandes no son más costosos por su tamaño o número de parámetros, sino por la **cantidad de datos que deben moverse entre memoria y procesador** en cada paso de generación. Esta realidad redefine la forma en que se diseña e implementa la infraestructura para modelos grandes, influyendo desde decisiones técnicas como la cuantización hasta la estrategia de auto-hospedaje o uso de APIs comerciales."
+qwen3-coder:30b,2011,589,34.9,6492.6,91.2,"**Resumen del artículo en 5 puntos clave:**
+
+1. **La inferencia de LLMs se divide en dos fases:** la fase de *prefill* (procesamiento inicial del prompt, paralela) y la fase de *decode* (generación secuencial token por token), donde la velocidad depende más del ancho de banda de memoria que de la potencia de cómputo.
+
+2. **La memoria es el recurso escaso en inferencia:** además de los pesos del modelo, el *KV cache* crece linealmente con la longitud del contexto, limitando cuántas solicitudes puede atender una máquina y generando la necesidad de técnicas avanzadas como la paginación para optimizar el uso.
+
+3. **La cuantización permite reducir el tamaño del modelo y mejorar la velocidad:** comprimiendo los pesos a menos bits (por ejemplo, 4 bits en lugar de 16), se logra mayor eficiencia en hardware, aunque puede afectar la calidad en tareas específicas como razonamiento matemático o generación de código.
+
+4. **El *batching* mejora el throughput al procesar múltiples solicitudes simultáneamente:** técnicas como el *continuous batching* permiten integrar y retirar solicitudes dinámicamente, aumentando la utilización del hardware, pero requieren un planificador complejo para evitar latencias impredecibles.
+
+5. **Las métricas clave en inferencia son: tiempo hasta el primer token, velocidad de generación y throughput**, que confluyen en una serie de tradeoffs: mayor throughput puede empeorar latencia, cuantizar mejora eficiencia pero reduce calidad, y la elección debe basarse en datos medidos, no suposiciones.
+
+---
+
+**Concepto más importante según mi criterio:**
+
+El **concepto más importante es que la velocidad de inferencia de LLMs depende en gran medida del ancho de banda de memoria y no solo de la potencia de cómputo**, lo cual contradice la intuición común. Esto implica que el diseño eficiente de infraestructura para LLMs requiere una atención especial a la gestión de memoria, cache y transferencias entre unidades de procesamiento y almacenamiento —una consideración crítica para cualquier implementación escalable.
+
+Este concepto es fundamental porque guía todas las decisiones técnicas: desde elecciones en cuantización hasta arquitecturas de servidores y estrategias de batching. Es el eje central que conecta la teoría con la práctica en el campo de la inferencia de modelos grandes, haciendo explícita la verdadera limitante física detrás de los costos operativos y capacidades de despliegue."
+qwen2.5:7b,2032,335,4549.7,8697.9,80.8,"**Resumen del Artículo:**
+
+1. **Preparación y Decodificación:** El proceso de inferencia se divide en dos fases: prefilling, donde se procesa el prompt completo paralelamente, y decodificación, donde se genera la respuesta token por token, lo que limita principalmente por los requisitos de memoria.
+
+2. **Memoria y Reemplazo:** La memoria es el recurso más limitado, especialmente con el crecimiento lineal del cache KV con la longitud del contexto, lo que influye directamente en el número de usuarios que puede manejar un solo servidor.
+
+3. **Cuantización:** Un proceso de reducir en precisión la representación de los pesos del modelo para reducir el tamaño y mejorar la velocidad de generación, permitiendo su ejecución en hardware de bajo consumo.
+
+4. **Batching:** Ésta es una técnica que mejora el uso del hardware mediante el procesamiento simultáneo de múltiples solicitudes, a pesar de incrementar la complejidad del planificador.
+
+5. **Eficiencia de Costos:** La relación entre la eficiencia operativa y los costos de hardware versus el pago por token en servicios comerciales, donde el auto-hospedaje se puede justificar a gran escala.
+
+**Concepto Más Importante:** La gestión eficiente de la memoria, ya que es el recurso más crítica y limitante en el proceso de inferencia, influye directamente en el rendimiento y la escalabilidad del sistema, siendo fundamental para optimizar el uso del hardware y mejorar la experiencia del usuario."

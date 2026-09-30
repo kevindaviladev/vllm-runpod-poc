@@ -1,0 +1,56 @@
+model,prompt_tokens,output_tokens,ttft_ms,total_ms,tok_s_measured,response
+qwen3-coder-30b,2011,412,1433.4,4479.5,135.3,"**Resumen en 5 puntos clave:**
+
+1. **La inferencia de LLMs se divide en dos fases principales:** *prefill* (procesamiento inicial del prompt en paralelo) y *decode* (generación secuencial de tokens), donde la segunda es la más exigente en términos de memoria y ancho de banda.
+
+2. **La memoria es el recurso más crítico:** Además de los pesos del modelo, el KV cache (que crece con la longitud del contexto) consume gran parte de la memoria disponible, limitando el número de solicitudes concurrentes que puede manejar un servidor.
+
+3. **La cuantización permite reducir el tamaño del modelo y mejorar la velocidad**, a costa de cierta pérdida de calidad. Es una técnica clave para ejecutar modelos grandes en hardware de bajo costo, aunque requiere ajuste según el tipo de tarea.
+
+4. **El batching continuo mejora el throughput del sistema** al permitir que múltiples solicitudes compartan recursos computacionales, aunque introduce complejidad en la gestión del planificador y puede afectar la latencia individual.
+
+5. **Las métricas clave para evaluar la inferencia son: tiempo hasta el primer token, velocidad de generación y throughput**, y su optimización requiere un análisis cuidadoso de tradeoffs entre rendimiento, costo y calidad.
+
+---
+
+**Concepto más importante según mi criterio:**
+
+El **concepto más importante es la relación entre memoria y rendimiento en la inferencia de LLMs**, especialmente la influencia del KV cache y la necesidad de gestionar eficientemente los recursos de memoria para mantener altas tasas de servicio y controlar costos. Esto define la arquitectura y las decisiones técnicas fundamentales en la implementación de sistemas de inferencia escalables, ya que la memoria limita directamente la capacidad de procesamiento concurrente y la viabilidad económica del auto-hosting."
+qwen3-coder-30b,2011,420,1076.4,4194.3,134.7,"**Resumen en 5 puntos clave:**
+
+1. **La inferencia de LLMs consta de dos fases principales:** prefill (procesamiento inicial del prompt) y decode (generación secuencial de tokens), siendo esta última la más exigente en términos de memoria y ancho de banda.
+
+2. **La memoria es el recurso crítico:** más allá del tamaño de los pesos del modelo, el KV cache (que crece linealmente con la longitud del contexto) representa una carga significativa en la capacidad de servir múltiples solicitudes simultáneamente.
+
+3. **La cuantización permite reducir el tamaño de los modelos y mejorar la velocidad**, sacrificando algo de precisión, pero con beneficios importantes en hardware de bajo costo y menor consumo de memoria.
+
+4. **El batching continuo mejora el throughput del sistema** al permitir compartir recursos entre múltiples solicitudes, aunque requiere un planificador complejo para evitar latencias impredecibles.
+
+5. **Las métricas clave de rendimiento son el tiempo hasta el primer token, la velocidad de generación y el throughput**, y la ingeniería de inferencia consiste en optimizar estas métricas bajo condiciones reales de uso.
+
+---
+
+**Concepto más importante según mi criterio:**
+
+**La inferencia de LLMs está limitada por la memoria y el ancho de banda de acceso a los datos, no por la potencia de cómputo.**
+
+Esto es crucial porque, a diferencia de lo que se podría pensar, la velocidad de generación de un modelo no depende tanto de cuántos núcleos tenga la GPU, sino de cuán rápido puede moverse la información entre la memoria y el procesador. Esta limitación física determina directamente el costo, la escalabilidad y el diseño de infraestructuras para servir modelos grandes, haciendo que la gestión eficiente de la memoria sea una de las principales preocupaciones en producción."
+qwen3-coder-30b,2011,423,1090.0,4204.7,135.8,"**Resumen en 5 puntos clave:**
+
+1. **La inferencia de LLMs se divide en dos fases principales**: *prefill* (procesamiento inicial del prompt) y *decode* (generación secuencial de tokens), siendo esta última la más exigente en términos de acceso a memoria.
+
+2. **La memoria es el recurso crítico**: El KV cache crece con la longitud del contexto y limita cuántas solicitudes puede atender un servidor, haciendo necesaria la gestión eficiente de memoria mediante técnicas como la paginación.
+
+3. **La cuantización permite reducir el tamaño del modelo y mejorar la velocidad**, sacrificando algo de precisión, pero requiere un análisis cuidadoso para evitar degradación en tareas sensibles.
+
+4. **El batching continuo mejora el throughput del sistema** al permitir compartir recursos entre múltiples solicitudes, aunque introduce complejidad en la planificación y puede afectar la latencia individual.
+
+5. **Las métricas clave de rendimiento son el tiempo hasta el primer token, la velocidad de generación y el throughput**, y la ingeniería de inferencia consiste en equilibrar estos indicadores según los requisitos del uso específico.
+
+---
+
+**Concepto más importante según mi criterio:**
+
+**La memoria como recurso escaso y fundamental en la inferencia de LLMs.**
+
+Este concepto es el más importante porque subyace a prácticamente todas las decisiones técnicas y económicas relacionadas con la implementación de modelos de lenguaje a gran escala. No solo determina la capacidad de procesamiento concurrente, sino también el costo operativo, la escalabilidad y la viabilidad de auto-hospedaje frente a servicios en la nube. Comprender cómo se comporta la memoria permite optimizar tanto el rendimiento como el uso eficiente del hardware, lo cual es clave para hacer viable la inferencia en entornos empresariales."
