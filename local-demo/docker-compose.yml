@@ -1,0 +1,73 @@
+name: qwen-local-demo
+
+# Todo en Docker: Ollama (modelo), Postgres (keys/logs), LiteLLM (gateway).
+# Los secretos viven en .env (cópialo de .env.example).
+#
+#   docker compose up -d
+#   docker compose exec ollama ollama pull qwen2.5:3b
+#   ./scripts/02-create-key.sh
+#   ./scripts/03-demo.sh
+#
+# NOTA Mac: Docker en Mac NO usa la GPU (Metal). Aquí Ollama corre en CPU
+# (suficiente para un 3B; un 7B va lento). Para GPU rápida usa Ollama NATIVO
+# (ver README → "Modo rápido con Ollama nativo").
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: qwen-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"          # API directa a Qwen (para el punto 1 del demo)
+    volumes:
+      - ollama-data:/root/.ollama
+    # GPU en Linux + NVIDIA: descomenta
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - { driver: nvidia, count: all, capabilities: [gpu] }
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: qwen-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: litellm
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  litellm:
+    # Official image (alternative): ghcr.io/berriai/litellm:main-stable
+    image: litellm/litellm:main-stable
+    container_name: qwen-litellm
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4000:4000"            # API + UI del gateway (para el punto 2 del demo)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # para poder apuntar a Ollama nativo (Linux)
+    environment:
+      DATABASE_URL: postgresql://litellm:${POSTGRES_PASSWORD}@postgres:5432/litellm
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY}
+      STORE_MODEL_IN_DB: "true"
+      UI_USERNAME: ${UI_USERNAME}
+      UI_PASSWORD: ${UI_PASSWORD}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      OLLAMA_OPENAI_BASE: ${OLLAMA_OPENAI_BASE}
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+
+volumes:
+  ollama-data:
+  pgdata:

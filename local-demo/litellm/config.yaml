@@ -1,0 +1,23 @@
+# LiteLLM — gateway local delante de Ollama.
+# Usamos el provider `openai/` apuntando a la API OpenAI de Ollama (/v1):
+# así los tool-calls se transmiten BIEN en streaming (el provider nativo `ollama/`
+# los filtra como texto y rompe agentes como opencode).
+model_list:
+  - model_name: qwen-local
+    litellm_params:
+      model: openai/qwen2.5:3b
+      api_base: os.environ/OLLAMA_OPENAI_BASE
+      api_key: ollama
+
+  # Alias para un 7B (púllalo con: docker compose exec ollama ollama pull qwen2.5:7b)
+  - model_name: qwen-local-7b
+    litellm_params:
+      model: openai/qwen2.5:7b
+      api_base: os.environ/OLLAMA_OPENAI_BASE
+      api_key: ollama
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
